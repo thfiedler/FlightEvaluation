@@ -42,11 +42,11 @@ class zcl_flight_evaluation definition
     data evaluation_exist_indicator type boole_d.
 
 
-endclass.
+ENDCLASS.
 
 
 
-class zcl_flight_evaluation implementation.
+CLASS ZCL_FLIGHT_EVALUATION IMPLEMENTATION.
 
 
   method constructor.
@@ -161,12 +161,12 @@ class zcl_flight_evaluation implementation.
     wa_zflight_eval-meal_rating = me->meal_rating.
 
 
-    data eval_exit type ref to ZFLIGHT_EVAL_BADI.
-    get badi eval_exit.
+    "data eval_exit type ref to ZFLIGHT_EVAL_BADI.
+    "get badi eval_exit.
 
-    call badi eval_exit->change_evaluation_before_save
-      changing
-        evaluation = wa_zflight_eval.
+    "call badi eval_exit->change_evaluation_before_save
+    "  changing
+    "    evaluation = wa_zflight_eval.
 
     modify zflight_eval from @wa_zflight_eval.
 
@@ -197,4 +197,4 @@ class zcl_flight_evaluation implementation.
   method zif_flight_evaluation~set_service_rating.
     me->service_rating = i_service_rating.
   endmethod.
-endclass.
+ENDCLASS.
