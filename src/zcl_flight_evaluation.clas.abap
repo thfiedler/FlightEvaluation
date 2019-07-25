@@ -78,7 +78,6 @@ class zcl_flight_evaluation implementation.
 
   method get_system_info.
     data uname type uname.
-    data xfeld type feld.
     uname = sy-uname.
 
     data language type langu.
