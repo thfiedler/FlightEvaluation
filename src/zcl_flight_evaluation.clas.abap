@@ -135,7 +135,7 @@ class zcl_flight_evaluation implementation.
 
   method get_evaluations_by_flight_data.
 
-    "refresh it_evaluation.
+    refresh it_evaluation.
 
     select bookid, customid, name, meal_rating, flight_rating, service_rating
      from zflight_eval
@@ -144,11 +144,10 @@ class zcl_flight_evaluation implementation.
         and fldate = @i_fldate
      into table @it_evaluation.
 
-    " Just some stupid code
-    data wa_eval like line of it_evaluation.
-    read table it_evaluation with key bookid = '0815' into wa_eval binary search.
-
-    "sort it_evaluation by name.
+    loop at it_evaluation assigning field-symbol(<fs>).
+      data(first_evaluation) = <fs>.
+      exit.
+    endloop.
 
   endmethod.
 
