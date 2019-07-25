@@ -23,7 +23,7 @@ endclass.
 
 class lcl_collection implementation.
   method clear_collection.
-    data colleaction_cleared type flag.
+    data collection_cleared type flag.
     refresh collection.
     free collection.
   endmethod.
