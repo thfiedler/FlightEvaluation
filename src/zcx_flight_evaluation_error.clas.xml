@@ -4,7 +4,6 @@
   <asx:values>
    <VSEOCLASS>
     <CLSNAME>ZCX_FLIGHT_EVALUATION_ERROR</CLSNAME>
-    <VERSION>1</VERSION>
     <LANGU>E</LANGU>
     <DESCRIPT>Generic Exception for flight evaluation application</DESCRIPT>
     <CATEGORY>40</CATEGORY>

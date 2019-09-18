@@ -7,6 +7,14 @@ class zcl_flight_evaluation definition
 
     interfaces zif_flight_evaluation.
 
+    types: begin of ty_admin_data,
+             created_by          type uname,
+             created_in_language type langu,
+             created_on_date     type d,
+             created_on_timezone type t,
+             created_on_time     type t,
+           end of ty_admin_data.
+
     methods constructor
       importing
         i_carrid type z_carrid
@@ -40,7 +48,7 @@ class zcl_flight_evaluation definition
     data flight_rating type z_flight_rating.
     data service_rating type z_service_rating.
     data evaluation_exist_indicator type boole_d.
-    methods get_system_info.
+    methods get_admin_data.
 
 
 endclass.
@@ -57,12 +65,11 @@ class zcl_flight_evaluation implementation.
     me->bookid = i_bookid.
 
     data wa_zflight_eval type zflight_eval.
-    select single * from zflight_eval
-      where carrid = @i_carrid
-        and connid = @i_connid
-        and fldate = @i_fldate
-        and bookid = @i_bookid
-      into @wa_zflight_eval  .
+    select single * from zflight_eval into wa_zflight_eval
+      where carrid = i_carrid
+        and connid = i_connid
+        and fldate = i_fldate
+        and bookid = i_bookid.
 
     if sy-subrc = 0.
       me->flight_rating = wa_zflight_eval-flight_rating.
@@ -76,13 +83,14 @@ class zcl_flight_evaluation implementation.
   endmethod.
 
 
-  method get_system_info.
-    data uname type uname.
-    uname = sy-uname.
+  method get_admin_data.
+    data admin_data type ty_admin_data.
 
-    data language type langu.
-    language = sy-langu.
-
+    admin_data-created_on_date = sy-datum.
+    admin_data-created_on_time = sy-uzeit.
+    admin_data-created_on_timezone = sy-timlo.
+    admin_data-created_by = sy-uname.
+    admin_data-created_in_language = sy-langu.
   endmethod.
 
   method create_flight_evaluation.
@@ -127,7 +135,7 @@ class zcl_flight_evaluation implementation.
       wa_eval-customid = <booking_list_item>-customid.
     endloop.
 
-    modify zflight_eval from table @it_eval.
+    modify zflight_eval from table it_eval.
 
   endmethod.
 
@@ -136,12 +144,11 @@ class zcl_flight_evaluation implementation.
 
     refresh it_evaluation.
 
-    select bookid, customid, name, meal_rating, flight_rating, service_rating
-     from zflight_eval
-      where carrid = @i_carrid
-        and connid = @i_connid
-        and fldate = @i_fldate
-     into table @it_evaluation.
+    select bookid customid name meal_rating flight_rating service_rating
+     from zflight_eval into table it_evaluation
+      where carrid = i_carrid
+        and connid = i_connid
+        and fldate = i_fldate.
 
     loop at it_evaluation assigning field-symbol(<fs>).
       data(first_evaluation) = <fs>.
@@ -177,7 +184,7 @@ class zcl_flight_evaluation implementation.
     "  changing
     "    evaluation = wa_zflight_eval.
 
-    modify zflight_eval from @wa_zflight_eval.
+    modify zflight_eval from wa_zflight_eval.
 
   endmethod.
 
@@ -193,17 +200,16 @@ class zcl_flight_evaluation implementation.
 
 
   method zif_flight_evaluation~set_flight_rating.
-    me->flight_rating = i_flight_rating.
+    move i_flight_rating to me->flight_rating.
   endmethod.
 
 
   method zif_flight_evaluation~set_meal_rating.
-    "me->meal_rating = i_meal_rating.
     move i_meal_rating to me->meal_rating.
   endmethod.
 
 
   method zif_flight_evaluation~set_service_rating.
-    me->service_rating = i_service_rating.
+    move i_service_rating to me->service_rating.
   endmethod.
 endclass.
