@@ -23,14 +23,14 @@ endclass.
 
 class lcl_collection implementation.
   method clear_collection.
-    data collection_cleared type flag.
-    refresh collection.
+    data collection_cleared type ABAP_BOOLEAN .
+    CLEAR COLLECTION.
     free collection.
   endmethod.
 
   method get_number_of_items.
     data: no_of_lines type int4.
-    describe table collection lines no_of_lines.
+    NO_OF_LINES = LINES( COLLECTION ).
   endmethod.
 
 endclass.
@@ -84,23 +84,23 @@ endclass.
 
 class lcl_calculator implementation.
   method add.
-    move op1 to sum.
-    add op2 to sum.
+    SUM = OP1.
+    SUM += OP2.
   endmethod.
 
   method subtract.
-    move op1 to diff.
-    subtract op2 from diff.
+    DIFF = OP1.
+    DIFF -= OP2.
   endmethod.
 
   method multiply.
-    move op2 to prod.
-    multiply prod by op1.
+    PROD = OP2.
+    PROD *= OP1.
   endmethod.
 
   method divide.
-    move op1 to quot.
-    divide quot by op2 .
+    QUOT = OP1.
+    QUOT /= OP2.
   endmethod.
 
 

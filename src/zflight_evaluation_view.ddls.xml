@@ -6,6 +6,7 @@
     <DDLNAME>ZFLIGHT_EVALUATION_VIEW</DDLNAME>
     <DDLANGUAGE>E</DDLANGUAGE>
     <DDTEXT>CDS View for Flight Evaluation</DDTEXT>
+    <SOURCE_TYPE>V</SOURCE_TYPE>
    </DDLS>
   </asx:values>
  </asx:abap>

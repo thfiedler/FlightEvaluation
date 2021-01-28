@@ -1,113 +1,116 @@
-class zcl_flight_evaluation definition
-  public
+CLASS zcl_flight_evaluation DEFINITION
+  PUBLIC
 
-  create public .
+  CREATE PUBLIC .
 
-  public section.
+  PUBLIC SECTION.
 
-    interfaces zif_flight_evaluation.
+    INTERFACES zif_flight_evaluation.
 
-    types: begin of ty_admin_data,
-             created_by          type uname,
-             created_in_language type langu,
-             created_on_date     type d,
-             created_on_timezone type t,
-             created_on_time     type t,
-           end of ty_admin_data.
+    TYPES: BEGIN OF ty_admin_data,
+             created_by          TYPE syuname,
+             created_in_language TYPE spras,
+             created_on_date     TYPE d,
+             created_on_timezone TYPE t,
+             created_on_time     TYPE t,
+           END OF ty_admin_data.
 
-    methods constructor
-      importing
-        i_carrid type z_carrid
-        i_connid type z_connid
-        i_fldate type d
-        i_bookid type z_bookid.
+    METHODS constructor
+      IMPORTING
+        i_carrid TYPE z_carrid
+        i_connid TYPE z_connid
+        i_fldate TYPE d
+        i_bookid TYPE z_bookid.
 
-    class-methods create_flight_evaluation
-      importing
-        i_carrid type z_carrid
-        i_connid type z_connid
-        i_fldate type s_date.
+    CLASS-METHODS create_flight_evaluation
+      IMPORTING
+        i_carrid TYPE z_carrid
+        i_connid TYPE z_connid
+        i_fldate TYPE d.
 
-    class-methods get_evaluations_by_flight_data
-      importing
-        i_carrid             type z_carrid
-        i_connid             type z_connid
-        i_fldate             type d
-      returning
-        value(it_evaluation) type zif_flight_evaluation~ty_evaluation_tab.
+    CLASS-METHODS get_evaluations_by_flight_data
+      IMPORTING
+        i_carrid             TYPE z_carrid
+        i_connid             TYPE z_connid
+        i_fldate             TYPE d
+      RETURNING
+        VALUE(it_evaluation) TYPE zif_flight_evaluation~ty_evaluation_tab.
 
-  protected section.
-  private section.
-    data carrid type z_carrid.
-    data connid type z_connid.
-    data fldate type d.
-    data bookid type z_bookid.
-    data customer_id type z_customer.
-    data customer_name type z_customer_name.
-    data meal_rating type z_meal_rating.
-    data flight_rating type z_flight_rating.
-    data service_rating type z_service_rating.
-    data evaluation_exist_indicator type boole_d.
-    methods get_admin_data.
-
-
-endclass.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+    DATA carrid TYPE z_carrid.
+    DATA connid TYPE z_connid.
+    DATA fldate TYPE d.
+    DATA bookid TYPE z_bookid.
+    DATA customer_id TYPE z_customer.
+    DATA customer_name TYPE z_customer_name.
+    DATA meal_rating TYPE z_meal_rating.
+    DATA flight_rating TYPE z_flight_rating.
+    DATA service_rating TYPE z_service_rating.
+    DATA evaluation_exist_indicator TYPE abap_boolean .
+    METHODS get_admin_data.
 
 
+ENDCLASS.
 
-class zcl_flight_evaluation implementation.
 
 
-  method constructor.
+CLASS zcl_flight_evaluation IMPLEMENTATION.
+
+
+  METHOD constructor.
     me->carrid = i_carrid.
     me->connid = i_connid.
     me->fldate = i_fldate.
     me->bookid = i_bookid.
 
-    data wa_zflight_eval type zflight_eval.
-    select single * from zflight_eval into wa_zflight_eval
-      where carrid = i_carrid
-        and connid = i_connid
-        and fldate = i_fldate
-        and bookid = i_bookid.
+    DATA wa_zflight_eval TYPE zflight_eval.
+    SELECT SINGLE   FROM zflight_eval FIELDS *
+      WHERE carrid = @i_carrid
+        AND connid = @i_connid
+        AND fldate = @i_fldate
+        AND bookid = @i_bookid INTO @wa_zflight_eval .
 
-    if sy-subrc = 0.
+    IF sy-subrc = 0.
       me->flight_rating = wa_zflight_eval-flight_rating.
       me->meal_rating = wa_zflight_eval-meal_rating.
       me->service_rating = wa_zflight_eval-service_rating.
       me->evaluation_exist_indicator = 'X'.
-    else.
+    ELSE.
       me->evaluation_exist_indicator = ' '.
-    endif.
+    ENDIF.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method get_admin_data.
-    data admin_data type ty_admin_data.
+  METHOD get_admin_data.
+    DATA admin_data TYPE ty_admin_data.
 
-    admin_data-created_on_date = sy-datum.
-    admin_data-created_on_time = sy-uzeit.
-    admin_data-created_on_timezone = sy-timlo.
+
+    admin_data-created_on_date = cl_abap_context_info=>get_system_date( ).
+    admin_data-created_on_time = cl_abap_context_info=>get_system_time( ).
+    admin_data-created_on_timezone = cl_abap_context_info=>get_user_time_zone(  ).
     admin_data-created_by = sy-uname.
     admin_data-created_in_language = sy-langu.
-  endmethod.
+  ENDMETHOD.
 
-  method create_flight_evaluation.
-    data it_eval type standard table of zflight_eval.
-    data wa_eval type zflight_eval.
-    "data tmp type /BEV1/BO_CON_FLAG.
-    data boole type boole_d.
+  METHOD create_flight_evaluation.
+    DATA it_eval TYPE STANDARD TABLE OF zflight_eval.
+    DATA wa_eval TYPE zflight_eval.
+    DATA txt TYPE char20.
 
-    types: begin of booking_list,
-             carrid     type z_carrid,
-             connid     type z_connid,
-             fldate     type d,
-             bookid     type z_bookid,
-             customid   type z_customer,
-             order_date type d,
-             cancelled  type abap_bool,
-           end of booking_list.
+    txt = 'Hello World'.
+
+
+    TYPES: BEGIN OF booking_list,
+             carrid     TYPE z_carrid,
+             connid     TYPE z_connid,
+             fldate     TYPE d,
+             bookid     TYPE z_bookid,
+             customid   TYPE z_customer,
+             order_date TYPE d,
+             cancelled  TYPE abap_bool,
+           END OF booking_list.
 
 *    select booking~carrid booking~connid booking~fldate booking~bookid booking~customid customer~name
 *      from sbook as booking join scustom as customer on customer~id = booking~customid
@@ -117,54 +120,55 @@ class zcl_flight_evaluation implementation.
 *         and booking~connid = i_connid
 *         and booking~fldate = i_fldate.
 
-    data booking_list  type standard table of booking_list.
-    field-symbols: <booking_list_item> type booking_list.
-    call function 'BAPI_SBOOK_GETLIST'
-      exporting
-        airlinecarrier   = i_carrid    " Carrier ID
-        connectionnumber = i_connid  " Connection number
-        dateofflight     = i_fldate    " Departure date
-      tables
-        bookinglist      = booking_list.
+    DATA booking_list  TYPE STANDARD TABLE OF booking_list.
+    "data dst type
+    FIELD-SYMBOLS: <booking_list_item> TYPE booking_list.
+*    CALL FUNCTION 'BAPI_SBOOK_GETLIST' DESTINATION 'ABC'
+*      EXPORTING
+*        airlinecarrier   = i_carrid    " Carrier ID
+*        connectionnumber = i_connid  " Connection number
+*        dateofflight     = i_fldate    " Departure date
+*      TABLES
+*        bookinglist      = booking_list.
 
-    loop at booking_list assigning <booking_list_item>.
+    LOOP AT booking_list ASSIGNING <booking_list_item>.
       wa_eval-bookid = <booking_list_item>-bookid.
       wa_eval-carrid = <booking_list_item>-carrid.
       wa_eval-connid = <booking_list_item>-connid.
       wa_eval-fldate = <booking_list_item>-fldate.
       wa_eval-customid = <booking_list_item>-customid.
-    endloop.
+    ENDLOOP.
 
-    modify zflight_eval from table it_eval.
+    MODIFY zflight_eval FROM TABLE @it_eval.
 
-  endmethod.
-
-
-  method get_evaluations_by_flight_data.
-
-    refresh it_evaluation.
-
-    select bookid customid name meal_rating flight_rating service_rating
-     from zflight_eval into table it_evaluation
-      where carrid = i_carrid
-        and connid = i_connid
-        and fldate = i_fldate.
-
-    loop at it_evaluation assigning field-symbol(<fs>).
-      data(first_evaluation) = <fs>.
-      exit.
-    endloop.
-
-  endmethod.
+  ENDMETHOD.
 
 
-  method zif_flight_evaluation~evaluation_exist.
+  METHOD get_evaluations_by_flight_data.
+
+    CLEAR it_evaluation.
+
+    SELECT
+     FROM zflight_eval FIELDS bookid, customid, name, meal_rating, flight_rating, service_rating
+      WHERE carrid = @i_carrid
+        AND connid = @i_connid
+        AND fldate = @i_fldate ORDER BY PRIMARY KEY INTO TABLE @it_evaluation .
+
+    LOOP AT it_evaluation ASSIGNING FIELD-SYMBOL(<fs>).
+      DATA(first_evaluation) = <fs>.
+      EXIT.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+  METHOD zif_flight_evaluation~evaluation_exist.
     r_evaluation_exist = me->evaluation_exist_indicator.
-  endmethod.
+  ENDMETHOD.
 
 
-  method zif_flight_evaluation~save_on_db.
-    data wa_zflight_eval type zflight_eval.
+  METHOD zif_flight_evaluation~save_on_db.
+    DATA wa_zflight_eval TYPE zflight_eval.
 
     wa_zflight_eval-bookid = me->bookid.
     wa_zflight_eval-carrid = me->carrid.
@@ -184,32 +188,32 @@ class zcl_flight_evaluation implementation.
     "  changing
     "    evaluation = wa_zflight_eval.
 
-    modify zflight_eval from wa_zflight_eval.
+    MODIFY zflight_eval FROM @wa_zflight_eval.
 
-  endmethod.
+  ENDMETHOD.
 
 
-  method zif_flight_evaluation~set_customer_id.
+  METHOD zif_flight_evaluation~set_customer_id.
     me->customer_id = i_customer_id.
-  endmethod.
+  ENDMETHOD.
 
 
-  method zif_flight_evaluation~set_customer_name.
+  METHOD zif_flight_evaluation~set_customer_name.
     me->customer_name = i_customer_name.
-  endmethod.
+  ENDMETHOD.
 
 
-  method zif_flight_evaluation~set_flight_rating.
-    move i_flight_rating to me->flight_rating.
-  endmethod.
+  METHOD zif_flight_evaluation~set_flight_rating.
+    me->flight_rating = i_flight_rating.
+  ENDMETHOD.
 
 
-  method zif_flight_evaluation~set_meal_rating.
-    move i_meal_rating to me->meal_rating.
-  endmethod.
+  METHOD zif_flight_evaluation~set_meal_rating.
+    me->meal_rating = i_meal_rating.
+  ENDMETHOD.
 
 
-  method zif_flight_evaluation~set_service_rating.
-    move i_service_rating to me->service_rating.
-  endmethod.
-endclass.
+  METHOD zif_flight_evaluation~set_service_rating.
+    me->service_rating = i_service_rating.
+  ENDMETHOD.
+ENDCLASS.

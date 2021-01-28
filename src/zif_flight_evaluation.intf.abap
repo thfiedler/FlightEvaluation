@@ -1,3 +1,4 @@
+"! Interface is implemented by class {@link zcl_flight_evaluation}
 interface zif_flight_evaluation
   public .
   types: begin of ty_evaluation,

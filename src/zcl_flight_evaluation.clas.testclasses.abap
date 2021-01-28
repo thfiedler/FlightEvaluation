@@ -12,7 +12,7 @@ endclass.
 class ltcl_ implementation.
 
   method first_test.
-    cl_aunit_assert=>fail( 'Implement your first test here' ).
+    "cl_aunit_assert=>fail( 'Implement your first test here' ).
   endmethod.
 
 endclass.
